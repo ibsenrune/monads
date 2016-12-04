@@ -3,19 +3,37 @@ module FSharp.Monads.Console
 open FSharp.Monads
 open FSharp.Monads.WriterOperators
 
-let writeInput i = Writer (i, sprintf "%O" i)
-let writeValue (Writer(v, s) as w) = w >>= writeInput
+let writerSample () =
+    let write i = Writer (i, sprintf "%O" i)
 
-[<EntryPoint>]
-let main argv =
     let value, log =
         4
-        |> writeInput
+        |> write
         |> Writer.map ((*)4)
-        |> writeValue
+        >>= write
         |> Writer.runWriter
 
     System.Console.WriteLine(log)
+    System.Console.WriteLine()
     System.Console.WriteLine(value)
+
+type ConnectionString = ConnectionString of string
+type Configuration = { ConnectionString : ConnectionString }
+let readerSample () =
+    let readFromDb connnectionString = 5
+    let program = 
+        reader {
+            let x = 4
+            let! conn = Reader.ask
+            let y = readFromDb conn
+            return x + y
+        }
+    program
+    
+[<EntryPoint>]
+let main argv =
+    let configuration = { ConnectionString = ConnectionString "foo" }
+    let program = readerSample ()
+    let result = Reader.runReader program configuration
 
     0

@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Writer.fs" />
+    <Compile Include="Reader.fs" />
     <Compile Include="FSharp.Monads.fs" />
     <None Include="App.config" />
   </ItemGroup>
